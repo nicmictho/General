@@ -18,10 +18,22 @@ class Fighter:
         self.medkits = medkitsMax
         self.smokesMax = smokesMax
         self.smokes = smokesMax
+
+    def restock(self):
+        self.hp = self.hpMax
+        self.shots = self.shotsMax
+        self.grenades = self.grenadesMax
+        self.rockets = self.rocketsMax
+        self.medkits = self.medkitsMax
+        self.smokes = self.smokesMax
+        print(f'Restocked all items of {self.name}')
+        self.info()
+        return
         
     def reload(self):
         self.shots=self.shotsMax
         print(f'{self.name} reloaded back to {self.shots}/{self.shotsMax} shots.')
+        self.info()
         return
     
     def heal(self, amount):
@@ -29,15 +41,17 @@ class Fighter:
         if self.hp > self.hpMax:
             self.hp = self.hpMax
         print(f'{self.name} healed {amount} to reach {self.hp}/{self.hpMax} hp.')
+        self.info()
         return
     
     def damage(self, amount):
         self.hp -= amount
-        if self.hp > 0:
+        if self.hp < 0:
             self.hp = 0
         print(f'{self.name} took {amount} damage to reach {self.hp}/{self.hpMax} hp.')
         if self.hp == 0:
             print(f'{self.name} has 0 hp and is downed.')
+        self.info()
         return
     
     def fire(self, amount = 1):
@@ -46,6 +60,7 @@ class Fighter:
         else:
             self.shots -= amount
             print (f'{self.name} fired {amount} shot(s), leaving them with {self.shots}/{self.shotsMax} shots.')
+        self.info()
         return
     
     def nade(self):
@@ -54,6 +69,7 @@ class Fighter:
         else:
             self.grenades -= 1
             print(f'{self.name} throws a grenade, leaving them with {self.grenades}')
+        self.info()
         return
     
     def launch(self):
@@ -62,6 +78,7 @@ class Fighter:
         else:
             self.rockets -= 1
             print(f'{self.name} launches a rocket, leaving them with {self.rockets}')
+        self.info()
         return
 
     def smoke(self):
@@ -70,6 +87,7 @@ class Fighter:
         else:
             self.smokes -= 1
             print(f'{self.name} throws a smoke, leaving them with {self.smokes}')
+        self.info()
         return
 
     def aid(self):
@@ -78,16 +96,11 @@ class Fighter:
         else:
             self.medkits -= 1
             print(f'{self.name} uses a medkit, leaving them with {self.medkits}')
+        self.info()
         return
     
     def use(self):
-        """items = [
-        ['Grenades' , self.grenades , self.grenadesMax],
-        ['Rockets' , self.rockets , self.rocketsMax],
-        ['Medkits' , self.medkits , self.medkitsMax],
-        ['Smokes' , self.smokes , self.smokesMax]
-        ]"""
-        print(f'What item is {self.name} using?\nPick from the following options:')
+        print(f'\nWhat item is {self.name} using?\nPick from the following options:')
         print('Grenades: g\nRockets: r\nMedkits: m\nSmokes: s')
         item = input().upper()
         if item == 'G':
@@ -98,6 +111,7 @@ class Fighter:
             self.aid()
         elif item == 'S':
             self.smoke()
+        self.info()
         return
 
     
@@ -115,6 +129,7 @@ class Fighter:
             if i[2] != 0:
                 #print(f'{i[0]}: {i[1]}/{i[2]}')
                 print(f'{i[0]}:' + ' '*(8-len(i[0])) + '|'*i[1] + '.'*(i[2]-i[1]))
+        print('\n')
         return
 
 class Sniper(Fighter):
@@ -137,10 +152,12 @@ class Assault(Fighter):
         super().__init__(name, spec='Assault', hpMax=6, shotsMax=4, grenadesMax = 1)
 
 def setup():
+    global player_dict
+    player_dict = {}
     while True:
         name = input('\nName: ')
         if name == '':
-            return
+            break
         
         switcher={
             '1': Sniper(name),
@@ -150,16 +167,54 @@ def setup():
             }
     
         Spec = '0'
-        while Spec != '' and Spec != '1' and Spec != '2' and Spec != '3' and Spec != '4':
-    
+        options = ['','1','2','3','4']
+        while True:
             print('\nClass:\n1: Sniper\n2: Assault\n3: Support\n4: Heavy')
             Spec = (input())
-    
+            if Spec in options:
+                break
+                    
+            
         if Spec == '':
-            return
+            continue
         else:
-            globals()[name]=switcher.get(Spec)
+            
+            globals()[name] = switcher.get(Spec)
             globals()[name].info()
+            player_dict[str(len(player_dict)+1)] = name
+    choosePlayer()
     return
 
+def choosePlayer():
+
+    while True:
+        print('Who is doing stuff?')
+        for i in range(1,len(player_dict)+1):
+            print(f'{i}: {player_dict[str(i)]}')
+        chosen = input()
+        if chosen not in player_dict:
+            setup()
+            break
+            
+        elif chosen in player_dict:
+            chooseAction(player_dict[chosen])
+    return
+    
+def chooseAction(Player):
+    print(f'{Player} is doing stuff')
+    stuff = {
+        '1':'fire'
+        '2':'damage'
+        '3':'heal'
+        '4':'reload'
+        '5':'use'
+        '6':'restock
+        }
+    return
+
+
+
+
+
 setup()
+
