@@ -74,29 +74,35 @@ class Fighter:
 
     def aid(self):
         if self.medkits == 0:
-            print('No smokes available!')
+            print('No medkits available!')
         else:
             self.medkits -= 1
             print(f'{self.name} uses a medkit, leaving them with {self.medkits}')
         return
     
     def use(self):
+        """items = [
+        ['Grenades' , self.grenades , self.grenadesMax],
+        ['Rockets' , self.rockets , self.rocketsMax],
+        ['Medkits' , self.medkits , self.medkitsMax],
+        ['Smokes' , self.smokes , self.smokesMax]
+        ]"""
         print(f'What item is {self.name} using?\nPick from the following options:')
-        print('Grenades: g\nRockets: r\nMedikits: m\nSmokes: s')
-        item = input()
-        if item == 'g':
+        print('Grenades: g\nRockets: r\nMedkits: m\nSmokes: s')
+        item = input().upper()
+        if item == 'G':
             self.nade()
-        elif item == 'r':
+        elif item == 'R':
             self.launch()
-        elif item == 'm':
+        elif item == 'M':
             self.aid()
-        elif item == 's':
+        elif item == 'S':
             self.smoke()
         return
-    
+
     
     def info(self):
-        print (f'{self.name}\nClass: {self.spec}')
+        print (f'\n{self.name}\nClass: {self.spec}')
         data = [
             ['hp' , self.hp , self.hpMax],
             ['Shots' , self.shots , self.shotsMax],
@@ -130,3 +136,30 @@ class Assault(Fighter):
     def __init__(self, name, grenadesMax = 1):
         super().__init__(name, spec='Assault', hpMax=6, shotsMax=4, grenadesMax = 1)
 
+def setup():
+    while True:
+        name = input('\nName: ')
+        if name == '':
+            return
+        
+        switcher={
+            '1': Sniper(name),
+            '2': Assault(name),
+            '3': Support(name),
+            '4': Heavy(name)
+            }
+    
+        Spec = '0'
+        while Spec != '' and Spec != '1' and Spec != '2' and Spec != '3' and Spec != '4':
+    
+            print('\nClass:\n1: Sniper\n2: Assault\n3: Support\n4: Heavy')
+            Spec = (input())
+    
+        if Spec == '':
+            return
+        else:
+            globals()[name]=switcher.get(Spec)
+            globals()[name].info()
+    return
+
+setup()
