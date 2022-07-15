@@ -190,13 +190,12 @@ class Assault(Fighter):
     def __init__(self, name, grenadesMax = 1):
         super().__init__(name, spec='Assault', hpMax=6, shotsMax=4, grenadesMax = 2)
 
-def setup():
+def addPlayers():
     global player_dict
     while True:
         name = input('\nName: ')
         if name == '':
-            choosePlayer()
-            continue
+            return
             
         switcher={
             '1': Sniper(name),
@@ -223,7 +222,7 @@ def setup():
             player_dict[str(len(player_dict)+1)] = name
     return
 
-def choosePlayer():
+def takeTurn():
 
     while True:
         print('\nWho is doing stuff?')
@@ -265,10 +264,13 @@ def chooseAction(Player):
         globals()[Player].info()
     return
 
-
-            
+def runLoop():
+    while True:
+        addPlayers()
+        takeTurn()
+    return
 
 
 print('\n'*48)
-setup()
+runLoop()
 
