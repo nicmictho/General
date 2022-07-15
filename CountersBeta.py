@@ -1,9 +1,9 @@
 player_dict = {}
+log = []
 
 def quant():
     x = input('Select amount: ')
     if x.isdigit() == True:
-        print('isdigit')
         return (int(x))
     else:
         return ('')
@@ -195,15 +195,16 @@ def setup():
     while True:
         name = input('\nName: ')
         if name == '':
-            break
-        
+            choosePlayer()
+            continue
+            
         switcher={
             '1': Sniper(name),
             '2': Assault(name),
             '3': Support(name),
             '4': Heavy(name)
             }
-    
+
         Spec = '0'
         options = ['','1','2','3','4']
         while True:
@@ -211,16 +212,15 @@ def setup():
             Spec = (input())
             if Spec in options:
                 break
-                    
-            
+                        
+                
         if Spec == '':
             continue
         else:
-            
+
             globals()[name] = switcher.get(Spec)
             globals()[name].info()
             player_dict[str(len(player_dict)+1)] = name
-    choosePlayer()
     return
 
 def choosePlayer():
@@ -231,7 +231,7 @@ def choosePlayer():
             print(f'{i}: {player_dict[str(i)]}')
         chosen = input()
         if chosen not in player_dict:
-            setup()
+            return
             break
             
         elif chosen in player_dict:
@@ -239,7 +239,10 @@ def choosePlayer():
     return
     
 def chooseAction(Player):
-    print(f'\n{Player} is doing stuff.')
+    
+    print('\n'*40+f'{Player} is doing stuff.')
+    action = getattr(globals()[Player],'info')
+    action()
     stuff = {
         '1':'fire',
         '2':'damage',
@@ -254,7 +257,7 @@ def chooseAction(Player):
         print(f'{i}: {stuff[str(i)]}')
     chosen = input()
     if chosen not in stuff:
-        choosePlayer()
+        return
     elif chosen in stuff:
         print(f'\nSelected {stuff[chosen]}.\n')
         action = getattr(globals()[Player],stuff[chosen])
@@ -266,6 +269,6 @@ def chooseAction(Player):
             
 
 
-
+print('\n'*48)
 setup()
 
