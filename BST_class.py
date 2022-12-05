@@ -38,7 +38,6 @@ class node:
             location.left_branch = node(value, location, branch)
         elif branch == 'r':
             location.right_branch = node(value, location, branch)
-        print(branch)
         return 1
     
     def delete(self):
@@ -127,7 +126,7 @@ class node:
             balanced =  True
         return balanced
     
-    def __tree_list(self):
+    def tree_list(self):
         tree = []
         layer = [self]
         while layer.count(None) < len(layer):
@@ -150,35 +149,23 @@ class node:
         return tree
   
     def balance_node(self):
-        print(f'balancing around {self.value}')
         if self.is_balanced() == True:
-            print('already balanced')
             return
         values = str(self).split()
         values = [int(i) for i in values]
         input_list = middle_out(values)
         branch = self.branch
         root = self.root
-        print(input_list)
         for item in input_list:
-            success = self.delete_value(item)
-            print(f'deleted {item}: {success}')
-            self.tree()
-            print('-'*10)
+            self.delete_value(item)
         for item in input_list:
-            success = self.insert(item)
-            print(f'inserted {item}: {success}')
-            self.tree()
-            print('-'*10)
+            self.insert(item)
         self.branch = branch
         self.root = root
         if self.branch == 'l':
             self.root.left_branch = self
         elif self.branch == 'r':
             self.root.right_branch = self
-        if self.root is not None:
-            print(f'branch: {self.branch}')
-            print(f'root: {self.root.value}')
         return
     
     def balance(self):
@@ -188,16 +175,14 @@ class node:
         values = middle_out(values)
         for value in values:
             node = self.search(value)[0]
-            self.tree()
             node.balance_node()
-            self.tree()
         return
         
     
     def tree(self):
         tree = ""
         number_width = len(str(self.max_node().value))
-        tree_list = self.__tree_list()
+        tree_list = self.tree_list()
         depth = len(tree_list)
         for layer in range(depth):
             initial_whitespace = 2 ** (depth - layer) - number_width
@@ -230,11 +215,32 @@ def middle_out(values):
         input_list = low_values + high_values
         return input_list
 
-def test():
+def tests():
+    tree = node(5)
     nodelist = [2,7,8,9,1,7,6]
     for i in nodelist:
         tree.insert(i)
+        
+    target = [[5],
+              [2, 7],
+              [1, None, 6, 8],
+              [None, None, None, None, None, None, None, 9]]
+    assert tree.tree_list() == target
+    
+    tree.delete_value(2)
+    
+    target = [[5],
+              [1, 7],
+              [None, None, 6, 8],
+              [None, None, None, None, None, None, None, 9]]
+    assert tree.tree_list() == target
+
+    tree.balance()
+    target = [[6], 
+              [5, 8], 
+              [1, None, 7, 9]]
+    assert tree.tree_list() == target
+
     return
 
-tree = node(5)
-test()
+tests()
