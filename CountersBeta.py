@@ -76,6 +76,9 @@ class Fighter:
         return
     
     def heal(self):
+        if self.hp == self.hpMax:
+            print(f'{self.name} is already on full health.')
+            return
         amount = quant()
         if amount == '':
             return
@@ -223,7 +226,7 @@ def addPlayers():
     return
 
 def takeTurn():
-
+    global player_dict
     while True:
         print('\nWho is doing stuff?')
         for i in range(1,len(player_dict)+1):
